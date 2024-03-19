@@ -45,3 +45,4 @@ Prepare Outreaching List: Fill the `outreaching_list.csv` spreadsheet with Faceb
 - It is recommended to test the bot with a small number of profiles before scaling up to avoid any issues.
 - The user of the bot needs to check that the chromedriver's version and their Chrome version are the same.
 "# Messenger_Bot_Project" 
+"# Messenger_Bot_Project" 
