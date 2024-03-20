@@ -14,8 +14,11 @@ import shutil
 import os
 from datetime import datetime
 
+
+
+
 # creating a chrome instance
-def initialize_driver(profile_path):
+def initialize_driver(profile_path, headless_mode):
     # Path to the Chrome WebDriver executable
     chrome_driver_path = "C:\\Users\\AHMED\\Desktop\\Messenger_Bot_Project\\chromedriver.exe"
     
@@ -23,8 +26,10 @@ def initialize_driver(profile_path):
     chrome_options  = Options()
     # to work on aspecific dir
     chrome_options .add_argument("user-data-dir=" + profile_path)
-    # To run in headless mode
-    chrome_options .add_argument("--headless")
+    
+    if headless_mode:
+        # To run in headless mode
+        chrome_options .add_argument("--headless")
     # to delete log (facebook log warnings)
     chrome_options .add_argument('--log-level=3')
     
@@ -33,7 +38,7 @@ def initialize_driver(profile_path):
     
     return driver
 
-def sending_messages(driver, fb_id, message1, message2, profile):
+def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
     # Random Sleep durations
     sleep_duration_Loading_account = random.randint(7, 12)
     sleep_duration = random.randint(4, 8)
@@ -52,25 +57,26 @@ def sending_messages(driver, fb_id, message1, message2, profile):
         pass
     
     # Maximizing the window
-    driver.maximize_window()
+    if not headless_mode:
+        driver.maximize_window()
     
-    print(f"Sending message 1 to Facebook Id = {fb_id} by {profile}")
+    print(f"Sending message 1 to Facebook Id = {fb_id} by Profile{profile}")
     # sending message1
     message_box = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div/div[1]/div[1]/div[3]/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div[4]/div[2]/div/div[1]/div[1]')))
     message_box.send_keys(message1)
     send_button = wait.until(EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/span[2]/div[1]")))
     send_button.click()
     sleep(sleep_duration)
-    print(f"Message 1 sent to Facebook Id = {fb_id} by {profile}\n")
+    print(f"Message 1 sent to Facebook Id = {fb_id} by Profile{profile}\n")
     
-    print(f"Sending message 2 to Facebook Id = {fb_id} by {profile}")
+    print(f"Sending message 2 to Facebook Id = {fb_id} by Profile{profile}")
     # Sending message2
     message_box = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div/div[1]/div[1]/div[3]/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div[4]/div[2]/div/div[1]/div[1]')))
     message_box.send_keys(message2)
     send_button = wait.until(EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/span[2]/div[1]")))
     send_button.click()
     sleep(sleep_duration)
-    print(f"Message 2 sent to Facebook Id = {fb_id} by {profile}\n")
+    print(f"Message 2 sent to Facebook Id = {fb_id} by Profile{profile}\n")
 
 # reading outreaching_list.csv & filling fb_ids[]
 def get_facebook_ids(fb_ids, spreadsheet_path):
@@ -96,9 +102,27 @@ def print_ascii_art():
         ascii_art = f.read()
         print(colored(ascii_art, "cyan"))
 
-#saving the progress.csv sheet after Keyboadinterrupt
+#saving the progress.csv sheet with timestamp after Keyboadinterrupt
 def save_progress(sheet_path):
-  # Save progress.csv with timestamp
   timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
   new_file_name = f"progress_{timestamp}.csv"
   shutil.copy(sheet_path, os.path.join("C:/Users/AHMED/Desktop/Messenger_Bot_Project/progress", new_file_name))
+
+def bulk_sender(profiles, fb_ids, message1, message2, sending_per_profile, progress_sheet_path, headless_mode):
+    count = 0  # Initialize count outside the loop
+    break_outer_loop = False  # Flag to indicate when to break the outer loop
+    for profile in profiles:
+            if break_outer_loop:
+                break
+            driver = initialize_driver(f"C:\\Users\\AHMED\\Desktop\\Messenger_Bot_Project\\Facebook\\Facebook{profile}",headless_mode)
+            start_index = count % len(fb_ids)  # Calculate the starting index for this profile_dir
+            for fb_id in fb_ids[start_index:]:  # Iterate over 10 IDs at a time
+                sending_messages(driver, fb_id, message1, message2, profile, headless_mode)
+                progress(fb_id, profile, progress_sheet_path)
+                count += 1
+                if count % sending_per_profile == 0:# Move to the next profile_dir after sending to 10IDs 
+                    driver.quit()  # Quit the driver after processing each profile_dir
+                    break
+                elif count == len(fb_ids):
+                    break_outer_loop = True  # Set the flag to break the outer loop
+                    break  # Break out of the inner loop and then the outer loop
