@@ -43,6 +43,10 @@ def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
     sleep_duration_Loading_account = random.randint(7, 12)
     sleep_duration = random.randint(4, 8)
     
+    # Maximizing the window
+    if not headless_mode:
+        driver.maximize_window()
+    
     wait = WebDriverWait(driver, 20)
     driver.get(f'https://www.messenger.com/t/{fb_id}')
     sleep(sleep_duration_Loading_account)
@@ -56,10 +60,6 @@ def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
         # Handle the case when the element is not found or not clickable
         pass
     
-    # Maximizing the window
-    if not headless_mode:
-        driver.maximize_window()
-    
     print(f"Sending message 1 to Facebook Id = {fb_id} by Profile{profile}")
     # sending message1
     message_box = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div/div[1]/div[1]/div[3]/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div[4]/div[2]/div/div[1]/div[1]')))
@@ -67,7 +67,7 @@ def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
     send_button = wait.until(EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/span[2]/div[1]")))
     send_button.click()
     sleep(sleep_duration)
-    print(f"Message 1 sent to Facebook Id = {fb_id} by Profile{profile}\n")
+    print(colored(f"Message 1 sent to Facebook Id = {fb_id} by Profile{profile}\n", "green"))
     
     print(f"Sending message 2 to Facebook Id = {fb_id} by Profile{profile}")
     # Sending message2
@@ -76,7 +76,7 @@ def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
     send_button = wait.until(EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/span[2]/div[1]")))
     send_button.click()
     sleep(sleep_duration)
-    print(f"Message 2 sent to Facebook Id = {fb_id} by Profile{profile}\n")
+    print(colored(f"Message 2 sent to Facebook Id = {fb_id} by Profile{profile}\n", "green"))
 
 # reading outreaching_list.csv & filling fb_ids[]
 def get_facebook_ids(fb_ids, spreadsheet_path):
