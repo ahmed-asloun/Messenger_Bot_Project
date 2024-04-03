@@ -43,6 +43,8 @@ def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
     sleep_duration_Loading_account = random.randint(7, 12)
     sleep_duration = random.randint(4, 8)
     
+    element_found = True
+    
     # Maximizing the window
     if not headless_mode:
         driver.maximize_window()
@@ -71,20 +73,18 @@ def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
         print(colored(f"Message 1 sent to Facebook Id = {fb_id} by Profile{profile}\n", "green"))
     except TimeoutException:
         print(colored("Element not found, pass", "light_yellow"))
+        element_found = False
         pass
     
     print(f"Sending message 2 to Facebook Id = {fb_id} by Profile{profile}")
     # Sending message2
-    try:
+    if element_found:
         message_box = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div/div[1]/div[1]/div[3]/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div[4]/div[2]/div/div[1]/div[1]')))
         message_box.send_keys(message2)
         send_button = wait.until(EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/span[2]/div[1]")))
         send_button.click()
         sleep(sleep_duration)
         print(colored(f"Message 2 sent to Facebook Id = {fb_id} by Profile{profile}\n", "green"))
-    except TimeoutException:
-        print(colored("Element not found, pass", "light_yellow"))
-        pass
 
 # reading outreaching_list.csv & filling fb_ids[]
 def get_facebook_ids(fb_ids, spreadsheet_path):
