@@ -10,8 +10,8 @@ def main():
     message2 = 'Type here your message'
     
     #spreadsheets
-    spreadsheet_path = "C:/Users/AHMED/Desktop/Messenger_Bot_Project/outreaching_list.csv"
-    progress_sheet_path = "C:/Users/AHMED/Desktop/Messenger_Bot_Project/progress.csv"
+    spreadsheet_path = "path/to/spreadsheet"
+    progress_sheet_path = "path/to/progress_sheet"
     
     # Headless Mode
     headless_mode = False
