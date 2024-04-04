@@ -6,8 +6,8 @@ def main():
     profiles = [6, 4, 3]
     
     #messages
-    message1 = 'Hey, I have a question please'
-    message2 = 'Do you offer a package that includes three rooms and a hallway for a specific price?'
+    message1 = 'Type here your message'
+    message2 = 'Type here your message'
     
     #spreadsheets
     spreadsheet_path = "C:/Users/AHMED/Desktop/Messenger_Bot_Project/outreaching_list.csv"
