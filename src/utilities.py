@@ -76,9 +76,9 @@ def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
         element_found = False
         pass
     
-    print(f"Sending message 2 to Facebook Id = {fb_id} by Profile{profile}")
     # Sending message2
     if element_found:
+        print(f"Sending message 2 to Facebook Id = {fb_id} by Profile{profile}")
         message_box = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div/div[1]/div[1]/div[3]/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div[4]/div[2]/div/div[1]/div[1]')))
         message_box.send_keys(message2)
         send_button = wait.until(EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/span[2]/div[1]")))
