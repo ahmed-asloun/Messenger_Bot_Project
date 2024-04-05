@@ -38,10 +38,10 @@ def initialize_driver(profile_path, headless_mode):
     
     return driver
 
-def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
+def sending_messages(driver, fb_id, messages, profile, headless_mode):
     # Random Sleep durations
-    sleep_duration_Loading_account = random.randint(7, 12)
-    sleep_duration = random.randint(4, 8)
+    sleep_duration_Loading_account = random.randint(7, 13)
+    sleep_duration = random.randint(4, 9)
     
     element_found = True
     
@@ -62,29 +62,25 @@ def sending_messages(driver, fb_id, message1, message2, profile, headless_mode):
         # Handle the case when the element is not found or not clickable
         pass
     
-    print(f"Sending message 1 to Facebook Id = {fb_id} by Profile{profile}")
-    # sending message1
-    try:
-        message_box = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div/div[1]/div[1]/div[3]/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div[4]/div[2]/div/div[1]/div[1]')))
-        message_box.send_keys(message1)
-        send_button = wait.until(EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/span[2]/div[1]")))
-        send_button.click()
-        sleep(sleep_duration)
-        print(colored(f"Message 1 sent to Facebook Id = {fb_id} by Profile{profile}\n", "green"))
-    except TimeoutException:
-        print(colored("Element not found, pass", "light_yellow"))
-        element_found = False
-        pass
-    
-    # Sending message2
-    if element_found:
-        print(f"Sending message 2 to Facebook Id = {fb_id} by Profile{profile}")
-        message_box = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div/div[1]/div[1]/div[3]/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div[4]/div[2]/div/div[1]/div[1]')))
-        message_box.send_keys(message2)
-        send_button = wait.until(EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/span[2]/div[1]")))
-        send_button.click()
-        sleep(sleep_duration)
-        print(colored(f"Message 2 sent to Facebook Id = {fb_id} by Profile{profile}\n", "green"))
+    i = 1 #count messages sent
+    for message in messages:
+        if element_found:
+            print(f"Sending message {i} to Facebook Id = {fb_id} by Profile{profile}")
+            try:
+                message_box = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div/div[1]/div[1]/div[3]/div/div/div/div/div/div/div[1]/div/div[2]/div/div/div[2]/div/div/div[4]/div[2]/div/div[1]/div[1]')))
+            except TimeoutException:
+                print(colored("Element not found, pass\n", "light_yellow"))
+                element_found = False
+                pass
+            else:
+                message_box.send_keys(message)
+                send_button = wait.until(EC.presence_of_element_located((By.XPATH, "/html[1]/body[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/span[2]/div[1]")))
+                send_button.click()
+                sleep(sleep_duration)
+                print(colored(f"Message {i} sent to Facebook Id = {fb_id} by Profile{profile}\n", "green"))
+                i += 1
+        else:
+            break
 
 # reading outreaching_list.csv & filling fb_ids[]
 def get_facebook_ids(fb_ids, spreadsheet_path):
@@ -116,7 +112,7 @@ def save_progress(sheet_path):
   new_file_name = f"progress_{timestamp}.csv"
   shutil.copy(sheet_path, os.path.join("C:/Users/AHMED/Desktop/Messenger_Bot_Project/progress", new_file_name))
 
-def bulk_sender(profiles, fb_ids, message1, message2, sending_per_profile, progress_sheet_path, headless_mode):
+def bulk_sender(profiles, fb_ids, messages, sending_per_profile, progress_sheet_path, headless_mode):
     count = 0  # Initialize count outside the loop
     break_outer_loop = False  # Flag to indicate when to break the outer loop
     for profile in profiles:
@@ -125,7 +121,7 @@ def bulk_sender(profiles, fb_ids, message1, message2, sending_per_profile, progr
             driver = initialize_driver(f"C:\\Users\\AHMED\\Desktop\\Messenger_Bot_Project\\Facebook\\Facebook{profile}",headless_mode)
             start_index = count % len(fb_ids)  # Calculate the starting index for this profile_dir
             for fb_id in fb_ids[start_index:]:  # Iterate over 10 IDs at a time
-                sending_messages(driver, fb_id, message1, message2, profile, headless_mode)
+                sending_messages(driver, fb_id, messages, profile, headless_mode)
                 progress(fb_id, profile, progress_sheet_path)
                 count += 1
                 if count % sending_per_profile == 0:# Move to the next profile_dir after sending to 10IDs 
